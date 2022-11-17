@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenzorBrana</title>
+    <style>        
+        *{
+            box-sizing: border-box;     
+        }
+        body {            
+            background-image: url("iot-wp.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;            
+            z-index: 1;
+            
+        }
+        #kontejner {
+            border: 3px solid black;
+            padding: 60px;
+            height: 300px;
+            width: 350px;         
+            text-align: center;
+            background-color: rgb(99, 91, 93);                        
+            z-index: 2;
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: antiquewhite;
+            border-radius: 10%;
+            font-size: large;
+            font-style: inherit;
+        }
+        
+        #dolazniTekstDioda {
+            width: 80px;
+            text-align: center;
+        }
+
+        #dolazniTekstNivo {
+            width: 80px;
+            text-align: center;
+        }
+
+        #dolazniTekstBrana {
+            width: 80px;
+            text-align: center;
+        }                      
+    </style>
+</head>
+<body>
+    <div id="kontejner">        
+        Nivo vode: <input type="text" id="dolazniTekstNivo" readonly><br><br>
+        Brana: <input type="text" id="dolazniTekstBrana" readonly><br><br>
+        Aktivna dioda: <input type="text" id="dolazniTekstDioda" readonly><br><br>     
+    </div>    
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcpff9FN9fQz4zq7V7d8KheJyWrXONnJI",
+            authDomain: "detektorvodabrana.firebaseapp.com",
+            databaseURL: "https://detektorvodabrana-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "detektorvodabrana",
+            storageBucket: "detektorvodabrana.appspot.com",
+            messagingSenderId: "69632238935",
+            appId: "1:69632238935:web:15c9c937f9ba6e99b18a12"
+        };
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+
+        var nivoVode = firebase.database().ref().child('SenzorVrijednost/nivoVode');
+        var brana = firebase.database().ref().child('SenzorVrijednost/branaOtvorena');
+        var dioda = firebase.database().ref().child('SenzorVrijednost/ledDioda');
+
+        var nivo_ind = document.getElementById("dolazniTekstNivo");
+        var brana_ind = document.getElementById("dolazniTekstBrana");
+        var dioda_ind = document.getElementById("dolazniTekstDioda");
+
+        nivoVode.on('value', (x) => {
+            nivo_ind.value = x.val();
+        });
+
+        brana.on('value', (x) => {
+            brana_ind.value = x.val();
+            if (x.val() === "Otvorena") {
+                dioda_ind.style.backgroundColor = "rgb(59, 231, 59)";
+            }
+            else {
+                brana_ind.value = "Zatvorena";
+                dioda_ind.style.backgroundColor = "rgb(238, 83, 83)";
+            }            
+        });
+
+        dioda.on('value', (x) => {
+            dioda_ind.value = x.val();
+            if (x.val() === "Zelena") {
+                dioda_ind.style.backgroundColor = "rgb(59, 231, 59)";
+            }
+            else {
+                dioda_ind.style.backgroundColor = "rgb(238, 83, 83)";
+            }
+        });              
+    </script>
+</body>
+
+</html>
